@@ -1,8 +1,6 @@
 import uuid
-from sql import (
-    User,
+from .repo import (
     create_user,
-    LoginSession,
     create_login_session,
     load_sessions,
     delete_login_session_by_key,
