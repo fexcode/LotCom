@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云际微语</title>
+    <!-- 引入 Socket.IO 客户端库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f7f6;
+            /* 浅灰绿背景，像晨雾 */
+            color: #333;
+        }
+
+        /* 布局容器 */
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            /* 柔和的阴影 */
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+            overflow: hidden;
+            border: 1px solid #e0e6e4;
+        }
+
+        /* 标题区域 - 极简自然风 */
+        header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        header h1 {
+            font-size: 1.2rem;
+            margin: 0;
+            color: #4a6fa5;
+            /* 像天空的颜色 */
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        /* 消息列表区域 */
+        #messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* 单条消息气泡 */
+        .msg-item {
+            padding: 10px 15px;
+            border-radius: 8px;
+            max-width: 80%;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* 区分系统消息和用户消息 */
+        .msg-system {
+            align-self: center;
+            background-color: #e8f0f2;
+            color: #667;
+            font-size: 0.85rem;
+            border-radius: 20px;
+        }
+
+        .msg-user {
+            align-self: flex-end;
+            background-color: #4a6fa5;
+            /* 湖水蓝 */
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+
+        .msg-others {
+            align-self: flex-start;
+            background-color: #f1f3f4;
+            border-bottom-left-radius: 2px;
+        }
+
+        /* 输入区域 */
+        #input-area {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+            background-color: #fff;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #4a6fa5;
+        }
+
+        button {
+            padding: 0 20px;
+            background-color: #4a6fa5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #3b5b85;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>云际微语</h1>
+            <small style="color: #999;">Socket.IO 聊天室</small>
+        </header>
+
+        <div id="messages">
+            <!-- 消息将动态插入这里 -->
+        </div>
+
+        <div id="input-area">
+            <input type="text" id="msgInput" placeholder="写下此刻的想法..." autocomplete="off">
+            <button id="sendBtn">发送</button>
+        </div>
+    </div>
+
+    <script>
+        const socket = io();
+        const messagesDiv = document.getElementById('messages');
+        const input = document.getElementById('msgInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        // 辅助函数：添加消息到界面
+        function appendMessage(text, type) {
+            const div = document.createElement('div');
+            div.className = 'msg-item ' + type;
+            div.textContent = text;
+            messagesDiv.appendChild(div);
+            // 滚动到底部
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // 监听连接
+        socket.on('connect', () => {
+            // 注意：后端emit的 "message" 事件会被这里捕获
+            // 但我们也可以专门监听 'connect' 事件来做本地处理
+        });
+
+        // 监听来自后端的消息
+        socket.on('message', (data) => {
+            // 简单判断一下：如果是欢迎语或再见语，显示为系统消息
+            if (data === 'Welcome to the chat!' || data === 'Goodbye!') {
+                appendMessage(data, 'msg-system');
+            } else {
+                // 假设其他消息都是其他人发的（或者广播回来的自己的消息）
+                appendMessage(data, 'msg-others');
+            }
+        });
+
+        socket.on('joined', (data) => {
+            appendMessage(`[系统消息] ${data.username}来了`, 'msg-system')
+        })
+
+        // 发送消息
+        function sendMessage() {
+            const text = input.value.trim();
+            if (text) {
+                // 发送给后端
+                socket.emit('message', text);
+
+                // 立即在界面显示自己发送的消息
+                appendMessage(text, 'msg-user');
+
+                input.value = ''; // 清空输入框
+            }
+        }
+
+        // 绑定点击事件
+        sendBtn.addEventListener('click', sendMessage);
+
+        // 绑定回车事件
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+
+</body>
+
+</html>

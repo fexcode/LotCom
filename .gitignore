@@ -10,3 +10,7 @@ wheels/
 .venv
 
 .python-version
+
+.VSCodeCounter
+uv.lock
+.waste
