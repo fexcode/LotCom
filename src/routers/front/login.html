@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,27 +9,36 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
         .glass-effect {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
+
         .input-focus:focus {
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
         }
     </style>
 </head>
+
 <body class="gradient-bg min-h-screen flex items-center justify-center p-4">
     <div id="app" class="w-full max-w-md">
         <div class="glass-effect rounded-2xl p-8 shadow-2xl">
             <div class="text-center mb-8">
                 <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                        </path>
                     </svg>
                 </div>
                 <h1 class="text-3xl font-bold text-white mb-2">LotCom</h1>
@@ -38,50 +48,38 @@
             <form @submit.prevent="handleLogin" class="space-y-5">
                 <div>
                     <label class="block text-sm font-medium text-white/90 mb-2">学号</label>
-                    <input 
-                        v-model="form.studentid" 
-                        type="text" 
-                        required
+                    <input v-model="form.studentid" type="text" required
                         class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none input-focus transition-all"
-                        placeholder="请输入学号"
-                    >
+                        placeholder="请输入学号">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-white/90 mb-2">用户名</label>
-                    <input 
-                        v-model="form.username" 
-                        type="text" 
-                        required
+                    <input v-model="form.username" type="text" required
                         class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none input-focus transition-all"
-                        placeholder="请输入用户名"
-                    >
+                        placeholder="请输入用户名">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-white/90 mb-2">密码</label>
-                    <input 
-                        v-model="form.password" 
-                        type="password" 
-                        required
+                    <input v-model="form.password" type="password" required
                         class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none input-focus transition-all"
-                        placeholder="请输入密码"
-                    >
+                        placeholder="请输入密码">
                 </div>
 
                 <div v-if="error" class="p-3 rounded-lg bg-red-500/20 border border-red-500/30 text-red-200 text-sm">
                     {{ error }}
                 </div>
 
-                <button 
-                    type="submit" 
-                    :disabled="loading"
-                    class="w-full py-3 px-4 bg-white text-indigo-600 font-semibold rounded-lg hover:bg-white/90 focus:outline-none focus:ring-2 focus:ring-white/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02] active:scale-[0.98]"
-                >
+                <button type="submit" :disabled="loading"
+                    class="w-full py-3 px-4 bg-white text-indigo-600 font-semibold rounded-lg hover:bg-white/90 focus:outline-none focus:ring-2 focus:ring-white/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02] active:scale-[0.98]">
                     <span v-if="loading" class="flex items-center justify-center gap-2">
                         <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
+                                fill="none"></circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
                         </svg>
                         登录中...
                     </span>
@@ -121,14 +119,14 @@
                         formData.append('password', this.form.password);
                         formData.append('studentid', this.form.studentid);
 
-                        const response = await fetch('/api/login', {
+                        const response = await fetch('/lotcom/api/login', {
                             method: 'POST',
                             body: formData,
                             credentials: 'include'
                         });
 
                         if (response.redirected || response.ok) {
-                            window.location.href = '/';
+                            window.location.href = '/lotcom/';
                         } else {
                             const data = await response.json().catch(() => ({}));
                             this.error = data.error || '登录失败，请检查账号密码';
@@ -143,4 +141,5 @@
         }).mount('#app');
     </script>
 </body>
+
 </html>
