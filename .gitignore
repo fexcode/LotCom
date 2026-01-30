@@ -15,3 +15,5 @@ wheels/
 uv.lock
 .waste
 .ruff-cache
+
+lotcom.db

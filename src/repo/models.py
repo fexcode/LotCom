@@ -27,6 +27,7 @@ class Message(SQLModel, table=True):
     def tostr(self):
         return f"{self.username}: {self.content}"
 
+
 class LoginSession(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     username: str = Field(max_length=50, foreign_key="user.username")
@@ -35,3 +36,4 @@ class LoginSession(SQLModel, table=True):
 
     # 关系定义
     user: User = Relationship(back_populates="login_sessions")
+

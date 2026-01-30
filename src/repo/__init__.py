@@ -5,6 +5,7 @@ from .message_repo import (
     create_message_by_name,
     get_messages_count,
     create_message,
+    serialize_msg
 )
 from .session_repo import (
     create_login_session,

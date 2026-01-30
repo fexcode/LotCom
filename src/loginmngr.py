@@ -48,6 +48,17 @@ class LoginManager:
             return self.sessions[session_id]
         else:
             return None
+    
+    def get_studentid(self, session_id):
+        username = self.get_username(session_id)
+        if username is None:
+            return "未知"
+            
+        user = get_user_by_name(username=username)
+        if user is not None:
+            return user.student_id
+        else:
+            return "未知"
 
     def is_logged_in(self, session_id):
         return session_id in self.sessions
