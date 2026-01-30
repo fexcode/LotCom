@@ -1,12 +1,21 @@
-from flask import Flask, send_from_directory, request, redirect, make_response,jsonify
+from flask import (
+    Flask,
+    send_from_directory,
+    request,
+    redirect,
+    make_response,
+    jsonify,
+    blueprints,
+)
 from flask_socketio import SocketIO
 from src.loginmngr import LoginManager
-from src.repo import create_message, get_all_messages, get_messages_count,serialize_msg
+from src.repo import create_message, get_all_messages, get_messages_count, serialize_msg
 
 mngr = LoginManager()
 
 app = Flask(__name__)
-app.static_folder = "front"
+lotcom = blueprints.Blueprint("lotcom", __name__,static_folder="front")
+
 sio = SocketIO(app, cors_allowed_origins="*")
 
 
@@ -14,19 +23,20 @@ def gsid():
     return request.sid  # type: ignore
 
 
-@app.route("/")
+@lotcom.route("/")
 def index():
     if not mngr.is_logged_in(request.cookies.get("sessionid")):
-        return redirect("/login")
-    return send_from_directory(app.static_folder, "index.html")  # type: ignore
+        return redirect("/lotcom/login")
+    return send_from_directory(lotcom.static_folder, "index.html")  # type: ignore
 
 
-@app.route("/login")
+@lotcom.route("/login")
 def login_page():
-    return send_from_directory(app.static_folder, "login.html")  # type: ignore
+    return send_from_directory(lotcom.static_folder, "login.html")  # type: ignore
+
 
 # ========== API 路由 ==========
-@app.route("/api/login", methods=["POST"])
+@lotcom.route("/api/login", methods=["POST"])
 def api_login():
     """处理登录/自动注册"""
     username = request.form.get("username")
@@ -43,37 +53,33 @@ def api_login():
     sessionid = mngr.login(username, password)
     if sessionid:
         rp = make_response(jsonify({"success": True, "username": username}))
-        rp.set_cookie("sessionid", sessionid, httponly=True, samesite='Lax')
+        rp.set_cookie("sessionid", sessionid, httponly=True, samesite="Lax")
         sio.emit("joined", {"username": username})
         return rp
     else:
         return jsonify({"error": "用户名或密码错误"}), 401
 
 
-@app.route("/api/me")
+@lotcom.route("/api/me")
 def get_current_user():
     """获取当前登录用户信息"""
     sessionid = request.cookies.get("sessionid")
     if not mngr.is_logged_in(sessionid):
         return jsonify({"error": "未登录"}), 401
-    
+
     username = mngr.get_username(sessionid)
-    return jsonify({
-        "username": username,
-        "studentid": mngr.get_studentid(sessionid)
-    })
+    return jsonify({"username": username, "studentid": mngr.get_studentid(sessionid)})
 
 
-@app.route("/api/logout", methods=["POST"])
+@lotcom.route("/api/logout", methods=["POST"])
 def logout():
     """退出登录"""
     sessionid = request.cookies.get("sessionid")
     if sessionid:
-        mngr.logout(sessionid) if hasattr(mngr, 'logout') else None
+        mngr.logout(sessionid) if hasattr(mngr, "logout") else None
     resp = jsonify({"success": True})
     resp.delete_cookie("sessionid")
     return resp
-
 
 
 @sio.on("message")

@@ -1,5 +1,7 @@
-from src.routers import app
+from src.routers import app,lotcom
 import sys
+
+app.register_blueprint(lotcom, url_prefix="/lotcom")
 
 # 如果是windows就是debug
 if sys.platform == "win32":

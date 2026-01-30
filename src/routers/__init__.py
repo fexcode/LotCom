@@ -1,4 +1,4 @@
 from . import auth, message
-from .app import app
+from .app import app, lotcom
 
-__all__ = ["app", "auth", "message"]
+__all__ = ["app", "auth", "message", "lotcom"]

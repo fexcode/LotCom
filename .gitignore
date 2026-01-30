@@ -17,3 +17,4 @@ uv.lock
 .ruff-cache
 
 lotcom.db
+t.conf
