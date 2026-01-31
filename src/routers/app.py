@@ -14,9 +14,17 @@ from src.repo import create_message, get_all_messages, get_messages_count, seria
 mngr = LoginManager()
 
 app = Flask(__name__)
-lotcom = blueprints.Blueprint("lotcom", __name__,static_folder="front")
+lotcom = blueprints.Blueprint("lotcom", __name__, static_folder="front")
 
-sio = SocketIO(app, cors_allowed_origins="*")
+# /lotcom/socket.io/
+sio = SocketIO(
+    app,
+    cors_allowed_origins="*",
+    async_mode="eventlet",
+    logger=True,
+    engineio_logger=True,
+    path='/lotcom/socket.io'
+)
 
 
 def gsid():
