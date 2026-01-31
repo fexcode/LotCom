@@ -190,6 +190,7 @@
                 {{ connectionStatus }}
             </div>
         </footer>
+        <audio id="msgTone" src="static/msg.wav" preload="auto"></audio>
     </div>
 
     <script>
@@ -229,7 +230,7 @@
                 },
                 initSocket() {
                     this.socket = io({
-                        path: '/lotcom/socket.io', 
+                        path: '/lotcom/socket.io',
                         transports: ['websocket', 'polling'],
                         withCredentials: true
                     });
@@ -252,17 +253,20 @@
 
                     // 接收普通消息
                     this.socket.on('message', (data) => {
+                        var isme = false;
                         // 解析后端发送的格式 "(username): content"
                         const match = data.match(/^\((.+?)\): (.+)$/);
                         if (match) {
                             const [, sender, content] = match;
+                                                        isme = sender === this.currentUser;
                             this.messages.push({
                                 content: content,
                                 sender: sender,
                                 time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
-                                isMe: sender === this.currentUser,
+                                isMe: isme,
                                 isSystem: false
                             });
+
                         } else {
                             // 系统消息格式
                             this.messages.push({
@@ -271,6 +275,11 @@
                             });
                         }
                         this.scrollToBottom();
+                        if (!isme) {
+                            const msgTone = document.getElementById('msgTone').play();
+                            console.log("新消息")
+                            console.log(msgTone)
+                        }
                     });
 
                     // 用户加入通知
@@ -302,6 +311,16 @@
                     });
                 },
                 sendMessage() {
+                    {
+                        // 第一次必须用户手势触发
+                        const audio = document.getElementById('msgTone');
+                        audio.play().then(() => {
+                            audio.pause();
+                            audio.currentTime = 0;
+                            unlocked = true;          // 标记已解锁
+                        });
+                    }
+
                     const content = this.newMessage.trim();
                     if (!content || !this.connected) return;
 

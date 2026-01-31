@@ -23,7 +23,7 @@ sio = SocketIO(
     async_mode="eventlet",
     logger=True,
     engineio_logger=True,
-    path='/lotcom/socket.io'
+    path="/lotcom/socket.io",
 )
 
 
@@ -130,6 +130,11 @@ def get_messages():
     result = {"len": len(messages), "messages": [serialize_msg(m) for m in messages]}
     print(result)
     return result
+
+
+@app.route("/lotcom/static/<path:filename>")
+def static_files(filename):
+    return send_from_directory("./static/", filename)
 
 
 if __name__ == "__main__":
