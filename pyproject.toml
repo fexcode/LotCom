@@ -3,7 +3,7 @@ name = "lotcom"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 dependencies = [
     "eventlet>=0.40.4",
     "flask>=3.1.2",
